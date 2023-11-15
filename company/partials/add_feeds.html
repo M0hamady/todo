@@ -1,0 +1,55 @@
+{% load static %}
+<div class="modal-body onboarding-horizontal p-0">
+    <div class="onboarding-media">
+      <img
+        src="{% static 'assets/img/illustrations/boy-verify-email-light.png'%}"
+        alt="boy-verify-email-light"
+        width="273"
+        class="img-fluid"
+        data-app-light-img="illustrations/boy-verify-email-light.png"
+        data-app-dark-img="illustrations/boy-verify-email-dark.png"
+      />
+    </div>
+    {% comment %} add feeds {% endcomment %}
+    <div class="onboarding-content mb-0">
+      <h4 class="onboarding-title text-body">{{task}}  </h4>
+      <div class="onboarding-info">
+        "We appreciate your feedback and acknowledge the obstacles we face. Rest assured, we're committed to overcoming them and delivering an exceptional user experience."
+      </div>
+      <form hx-post="{% url 'add-feed' %}" hx-target='#tasklist'>
+        {% csrf_token %}
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="mb-3">
+              <label for="nameEx7" class="form-label">Your Feedback</label>
+              <input hidden name="task_id" value="{{task.id}}" />
+              <input
+                class="form-control"
+                placeholder="Enter your Feed..."
+                type="text"
+                value=""
+                tabindex="0"
+                name="feed"
+                id="nameEx7"
+              />
+            </div>
+          </div>
+          {% comment %} <div class="col-sm-6">
+            <div class="mb-3">
+              <label for="roleEx7" class="form-label">Your Role</label>
+              <select class="form-select" tabindex="0" id="roleEx7">
+                <option>Web Developer</option>
+                <option>Business Owner</option>
+                <option>Other</option>
+              </select>
+            </div>
+          </div> {% endcomment %}
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">
+      Close
+    </button>
+      </form>
+    </div>
+    {% comment %} finish ADD FEEDS {% endcomment %}
+  </div>

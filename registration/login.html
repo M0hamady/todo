@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block content %}
+
+    <div class="authentication-wrapper authentication-cover authentication-bg">
+        <div class="authentication-inner row">
+          <!-- /Left Text -->
+          <div class="d-none d-lg-flex col-lg-7 p-0">
+            <div class="auth-cover-bg auth-cover-bg-color d-flex justify-content-center align-items-center">
+              <img
+                src="{% static 'assets/img/illustrations/auth-login-illustration-light.png'%}"
+                alt="auth-login-cover"
+                class="img-fluid my-5 auth-illustration w-px-500  " style= 'margin-left:20vw'
+                data-app-light-img="illustrations/auth-login-illustration-light.png"
+                data-app-dark-img="illustrations/auth-login-illustration-dark.png"
+              />
+  
+              <img
+                src="{% static 'assets/img/illustrations/bg-shape-image-light.png '%}"
+                alt="auth-login-cover"
+                class="platform-bg w-px-20"
+                data-app-light-img="illustrations/bg-shape-image-light.png"
+                data-app-dark-img="illustrations/bg-shape-image-dark.png"
+              />
+            </div>
+          </div>
+          <!-- /Left Text -->
+  
+          <!-- Login -->
+          <div class="d-flex col-12 col-lg-5 align-items-center p-sm-5 p-4">
+            <div class="w-px-400 mx-auto">
+              <!-- Logo -->
+              <div class="app-brand mb-4">
+                <a href="index.html" class="app-brand-link gap-2">
+                  <span class="app-brand-logo demo h-px-50 ">
+                    
+                    <img src="{% static 'assets/img/cmopnay/company.png'%}" class="img-fluid  " alt="">
+                  </span>
+                </a>
+              </div>
+              <!-- /Logo -->
+              <h3 class="mb-1 fw-bold">Welcome to CodeOcean! 👋</h3>
+              <p class="mb-4">Please sign-in to your account and start the adventure</p>
+  
+              <form method="POST" action="{% url 'login' %}" autocomplete="off">
+                {% csrf_token %}
+        
+                {% for field in form %}
+                <div class="form-group mb-3">
+                    <label>{{ field.label_tag }}</label>
+                    {{ field.errors }}
+                    {% render_field field class="form-control" placeholder=field.name %}
+                </div>
+                {% endfor %}
+                
+                <button type="submit"  class="btn btn-primary d-grid w-100 mt-2">Login</button>
+            </form>
+  
+              <p class="text-center">
+                <span>New on our platform?</span>
+                <a href="/register">
+                  <span>Create an account</span>
+                </a>
+              </p>
+  
+              <div class="divider my-4">
+                <div class="divider-text">or</div>
+              </div>
+  
+              <div class="d-flex justify-content-center">
+                <a href="javascript:;" class="btn btn-icon btn-label-facebook me-3">
+                  <i class="tf-icons fa-brands fa-facebook-f fs-5"></i>
+                </a>
+  
+                <a href="javascript:;" class="btn btn-icon btn-label-google-plus me-3">
+                  <i class="tf-icons fa-brands fa-google fs-5"></i>
+                </a>
+  
+                <a href="javascript:;" class="btn btn-icon btn-label-twitter">
+                  <i class="tf-icons fa-brands fa-twitter fs-5"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+          <!-- /Login -->
+        </div>
+      </div>
+
+{% endblock content %}

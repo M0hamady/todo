@@ -1,0 +1,125 @@
+{% extends 'base_company.html' %}
+{% load static %}
+{% block content %}
+
+<div class="content-wrapper">
+    <!-- Content -->
+
+    <div class="container-xxl flex-grow-1 container-p-y">
+      <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">User Profile /</span> Teams</h4>
+
+      <!-- Header -->
+      {% include 'registration/profile_partial/header.html'%}
+      <!--/ Header -->
+
+      <!-- Navbar pills -->
+      <div class="row">
+        <div class="col-md-12">
+            {% include 'registration/profile_partial/list_links _company.html' with active='profile'%}          <!--/ Header -->
+
+        </div>
+      </div>
+      <!--/ Navbar pills -->
+
+      <!-- Teams Cards -->
+      <div class="row g-4" id="container">
+        {% for project in  projects %}
+        <div class="col-xl-4 col-md-6 mb-4">
+          <div class="card h-100">
+            <div class="card-header d-flex justify-content-between">
+              <div class="card-title mb-0">
+                <h5 class="m-0 me-2">{{project}}</h5>
+                <small class="text-muted">Preview</small>
+              </div>
+              {% comment %} <div class="dropdown">
+                <button
+                  class="btn p-0"
+                  type="button"
+                  id="earningReports"
+                  data-bs-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                >
+                  <i class="ti ti-dots-vertical ti-sm text-muted"></i>
+                </button>
+                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="earningReports">
+                  <a class="dropdown-item" href="javascript:void(0);">Download</a>
+                  <a class="dropdown-item" href="javascript:void(0);">Refresh</a>
+                  <a class="dropdown-item" href="javascript:void(0);">Share</a>
+                </div>
+              </div> {% endcomment %}
+            </div>
+            <div class="card-body pb-0">
+              <ul class="p-0 m-0">
+                <li class="d-flex mb-3">
+                  <div class="avatar flex-shrink-0 me-3">
+                    <span class="avatar-initial rounded bg-label-primary"
+                      ><i class="ti ti-chart-pie-2 ti-sm"></i
+                    ></span>
+                  </div>
+                  <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                    <div class="me-2">
+                      <h6 class="mb-0">Total Sprints</h6>
+                      <small class="text-muted">{{project.sprints.count}} Sprint</small>
+                    </div>
+                    <div class="user-progress">
+                      <small>T: {{project.tasks|length}}</small><i class="ti ti-chevron-up text-success ms-3"></i>
+                      <small class="text-muted">UC</small>
+                    </div>
+                  </div>
+                </li>
+                <li class="d-flex mb-3">
+                  <div class="avatar flex-shrink-0 me-3">
+                    <span class="avatar-initial rounded bg-label-success"
+                      ><i class="ti ti-chart-pie-2 ti-sm"></i
+                    ></span>
+                  </div>
+                  <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                    <div class="me-2">
+                      <h6 class="mb-0">Month Sprints Start:</h6>
+                      <small class="text-muted">{{project.sprints_this_month_start|length}}</small>
+                    </div>
+                    <div class="user-progress">
+                      <small>T:{{project.tasks_this_month_start|length}}</small><i class="ti ti-chevron-up text-success ms-3"></i>
+                      <small class="text-muted">UC</small>
+                    </div>
+                  </div>
+                </li>
+                <li class="d-flex mb-3">
+                  <div class="avatar flex-shrink-0 me-3">
+                    <span class="avatar-initial rounded bg-label-secondary"
+                      ><i class="ti ti-chart-pie-2 ti-sm"></i
+                    ></span>
+                  </div>
+                  <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                    <div class="me-2">
+                      <h6 class="mb-0">Month Sprints End:</h6>
+                      <small class="text-muted">{{project.sprints_this_month_end|length}}</small>
+                    </div>
+                    <div class="user-progress">
+                      <small>T:{{project.tasks_this_month_end|length}}</small><i class="ti ti-chevron-up text-success ms-3"></i>
+                      <small class="text-muted">UC</small>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+              <div id="reportBarChart"></div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+        
+      </div>
+      <!--/ Teams Cards -->
+    </div>
+    <!-- / Content -->
+
+    <!-- Footer -->
+   
+  </div>
+      <!-- Layout container -->
+    
+       
+
+
+{% endblock content %}

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <div class="content-wrapper">
+        <!-- Content -->
+
+        <div class="container-xxl flex-grow-1 container-p-y">
+          <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">User Profile /</span> Profile</h4>
+
+          <!-- Header -->
+          {% include 'registration/profile_partial/header.html' with active='projects' %}          <!--/ Header -->
+
+          <!-- Navbar pills -->
+          <div class="row">
+            <div class="col-md-12">
+                {% include 'registration/profile_partial/list_links.html'%} 
+            </div>
+          </div>
+          <!--/ Navbar pills -->
+
+          <!-- Project Cards -->
+          {% include 'registration/profile_partial/list_tasks_update.html'%} 
+          
+          <!--/ Project Cards -->
+        </div>
+        <!-- / Content -->
+
+  
+
+      </div>
+{% endblock content %}

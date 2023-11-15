@@ -1,0 +1,22 @@
+<li class="menu-item">
+    <a href="javascript:void(0);" class="menu-link menu-toggle">
+        <i class="menu-icon tf-icons ti ti-smart-home"></i>
+        <div data-i18n="{{ name }}">
+            {% block name %} {{ name }} {% endblock %}
+        </div>
+        <div class="badge bg-label-primary rounded-pill ms-auto">3</div>
+    </a>
+    <ul class="menu-sub">
+        {% if drop_list %}
+            {% for item in drop_list %}
+                <li class="menu-item">
+                    <a href="index.html" class="menu-link">
+                        <div data-i18n="{{item.name}}">{{item.name}}</div>
+                    </a>
+                </li>
+            {% endfor %}
+        {% else %}
+            {# Handle the case when drop_list is empty or not provided #}
+        {% endif %}
+    </ul>
+</li>

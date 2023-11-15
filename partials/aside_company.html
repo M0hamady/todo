@@ -1,0 +1,54 @@
+
+{% load static %}
+<aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme   pt-4">
+    <div class="app-brand demo">
+      <a href="index.html" class="app-brand-link">
+        <span class="app-brand-logo demo">
+         
+          <img
+                src="{% static 'assets/img/cmopnay/company.png'%}"
+                alt="company"
+                class="w-px-30"
+                />
+        </span>
+        <span class="app-brand-text demo menu-text fw-bold " style='font-size:10px'>{{user.username}}</span>
+      </a>
+
+      <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
+        <i class="ti menu-toggle-icon d-none d-xl-block ti-sm align-middle"></i>
+        <i class="ti ti-x d-block d-xl-none ti-sm align-middle"></i>
+      </a>
+    </div>
+    <div class="menu-inner-shadow"></div>
+
+    <ul class="menu-inner py-1">
+     {% if user.is_superuser %}
+      <!-- Components -->
+      <li class="menu-header small text-uppercase">
+        <span class="menu-header-text"><a href= "/admin">  admin </a> </span>
+      </li>
+      {% endif %}
+      
+      <li class="menu-header small text-uppercase">
+        <a href="{% url 'company' %}" class="menu-link " style="text-decoration: none;">
+          <i class="menu-icon tf-icons ti ti-smart-home"></i>
+          <div data-i18n="{{ name }}">
+            Sprints
+          </div>
+          <div class="badge bg-label-primary rounded-pill ms-auto"></div>
+        </a>
+      </li>
+      </li>
+      <a class="menu-header small text-uppercase" href= "{% url 'company_projects'%}" > 
+        <li  class="menu-link ">
+          <i class="menu-icon tf-icons ti ti-smart-home"></i>
+          <div data-i18n="{{ name }}">
+            Projects
+          </div>
+          <div class="badge bg-label-primary rounded-pill ms-auto"></div>
+      </li>
+      </a>
+      <!-- Cards -->
+     
+    </ul>
+  </aside>

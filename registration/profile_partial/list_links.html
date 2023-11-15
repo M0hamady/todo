@@ -1,0 +1,22 @@
+<ul class="nav nav-pills flex-column flex-sm-row mb-4">
+    <li class="nav-item">
+      <a {% if active == 'profile' %} class="nav-link active" href= javascript:void(0);{% else %} class="nav-link"  href='{% url 'profile'  %}'{% endif %} 
+        ><i class="ti ti-user-check me-1 ti-xs"></i> Profile</a
+      >
+    </li>
+    <li class="nav-item">
+      <a {% if active == 'teams' %} class="nav-link active" href=javascript:void(0);{% else %} class="nav-link" href='{% url 'profile_sprints'  %}'{% endif %}
+        ><i {% if active == 'teams' %}  class="ti ti-users me-1 ti-xs" {% else %} class="ti ti-layout-grid me-1 ti-xs"  {% endif %}></i> Sprints</a
+      >
+    </li>
+    <li class="nav-item">
+      <a  {% if active == 'projects' %} class="nav-link active" href=javascript:void(0);{% else %} class="nav-link" href='{% url 'profile_tasks'  %}'{% endif %} 
+        ><i class="ti ti-layout-grid me-1 ti-xs"></i> Working on </a
+      >
+    </li>
+    {% comment %} <li class="nav-item">
+      <a class="nav-link" href="pages-profile-connections.html"
+        ><i class="ti ti-link me-1 ti-xs"></i> Connections</a
+      >
+    </li> {% endcomment %}
+  </ul>
