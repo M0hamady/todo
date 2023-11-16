@@ -30,24 +30,7 @@ class Login(LoginView):
         is_employee = False
         is_company = False
         
-        try:
-            is_employee = Employee.objects.get(user=user)
-            print("is_employee")
-            is_employee = 1
-        except:
-            try:
-                is_company = Company.objects.get(user=user)
-                print("is_company")
-                is_company = 1
-            except:
-                pass
-        
-        if is_employee:
-            return redirect("profile")
-        elif is_company:
-            print(is_company)
-            return redirect('company')
-        
+        check_redirect(user)
         return super().form_valid(form)
     #    if err he must return to unauthorized
         # Retrieve the FCM token from the request (assuming it's sent in the request data)
@@ -94,7 +77,23 @@ def check_sav_fcm(request,token):
     print(FCMToken.objects.all())
     return fcm_token
 
-
+def check_redirect(user):
+    try:
+        is_employee = Employee.objects.get(user=user)
+        print("is_employee")
+        is_employee = 1
+    except:
+        try:
+            is_company = Company.objects.get(user=user)
+            print("is_company")
+            is_company = 1
+        except:
+            pass
+    
+    if is_employee:
+        return redirect("profile")
+    elif is_company:
+        return redirect('company')
 def send_notification_to_user(user , title, body):
     # Retrieve the FCM token for the user
     client_token = get_object_or_404(FCMToken, user=user).fcm_token
@@ -138,7 +137,7 @@ class Profile(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         employee = Employee.objects.filter(user=self.request.user).first()
-        
+        check_redirect(self.request.user)
         if employee:
             tasks = Task.objects.filter(assigned_to=employee)
             def calculate_duration_current_month():
@@ -213,6 +212,7 @@ class ProfileCompanyProjects(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        check_redirect(self.request.user)
         company = get_object_or_404(Company, user=self.request.user)
         projects= Project.objects.filter(company=company)
         # print(context)
@@ -246,6 +246,7 @@ class ProfileCompanyTimeLine(LoginRequiredMixin, TemplateView):
         context['current_meeting'] = current_meeting
         
         return context
+
 class ProfileCompanyTeam(LoginRequiredMixin, TemplateView):
     template_name = 'company/projects.html'
 
