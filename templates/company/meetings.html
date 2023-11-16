@@ -1,0 +1,68 @@
+
+{% extends 'base_company.html' %}
+{% load static %}
+{% block content %}
+
+<div class="content-wrapper">
+    <!-- Content -->
+
+    <div class="container-xxl flex-grow-1 container-p-y">
+      <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">User Profile /</span> Teams</h4>
+
+      <!-- Header -->
+      {% include 'registration/profile_partial/header.html'%}
+      <!--/ Header -->
+
+      <!-- Navbar pills -->
+      <div class="row">
+        <div class="col-md-12">
+            {% include 'registration/profile_partial/list_links _company.html' with active='profile'%}          <!--/ Header -->
+
+        </div>
+      </div>
+      <!--/ Navbar pills -->
+      <div class="d-flex justify-content-around">
+         
+      <div class="card d-flex flex-column p-2 text-center">
+        <h3>All meetings</h3>
+        {% for meeting  in meetings  %}
+        <div class="bs-toast toast fade show m-2  " role="alert" aria-live="assertive" aria-atomic="true">
+          <div class="toast-header">
+            <i class="ti ti-bell ti-xs me-2 text-primary"></i>
+            <div class="me-auto fw-semibold">  {% if meeting.sprint %}  {{meeting.sprint}} {% elif  meeting.task %} {{meeting.task}} {% endif %}  </div>
+            <a href="{{meeting.link}}" class="text-success">Link</a>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+          </div>
+          <div class="toast-body">{{meeting.start_time}} :: {{meeting.end_time}}</div>
+        </div>
+        {% endfor %}</div>
+      <div class="card d-flex flex-column p-2 text-center">
+        <h3>All meetings</h3>
+        
+        {% for meeting  in current_meeting  %}
+        <div class="bs-toast toast fade show m-2" role="alert" aria-live="assertive" aria-atomic="true">
+          <div class="toast-header">
+            <i class="ti ti-bell ti-xs me-2 text-primary"></i>
+            <div class="me-auto fw-semibold">  {% if meeting.sprint %}  {{meeting.sprint}} {% elif  meeting.task %} {{meeting.task}} {% endif %}  </div>
+            <a href="{{meeting.link}}" class="text-success">Link</a>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+          </div>
+          <div class="toast-body">{{meeting.start_time}} :: {{meeting.end_time}}</div>
+        </div>
+        {% endfor %} </div>
+      </div>
+      <!-- Teams Cards -->
+      
+      <!--/ Teams Cards -->
+    </div>
+    <!-- / Content -->
+
+    <!-- Footer -->
+   
+  </div>
+      <!-- Layout container -->
+    
+       
+
+
+{% endblock content %}

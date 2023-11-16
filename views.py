@@ -218,6 +218,34 @@ class ProfileCompanyProjects(LoginRequiredMixin, TemplateView):
         # print(context)
         context['projects'] = projects
         return context
+class ProfileCompanyTimeLine(LoginRequiredMixin, TemplateView):
+    template_name = 'company/meetings.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        company = get_object_or_404(Company, user=self.request.user)
+        meetings = set()
+        
+        tasks = Task.objects.filter(company=company)
+        
+        for task in tasks:
+            try:
+                meeting = Meeting.objects.filter(task=task).first()
+                if meeting and meeting.id not in meetings:
+                    meetings.add(meeting)
+            except:
+                pass
+
+        current_datetime = datetime.datetime.now()
+        current_meetings = Meeting.objects.filter(start_time__lte=current_datetime, )
+        meetings.update(current_meetings)
+        
+        context['meetings'] = meetings
+
+        current_meeting = Meeting.objects.filter(start_time__lte=current_datetime, end_time__gte=current_datetime)
+        context['current_meeting'] = current_meeting
+        
+        return context
 class ProfileCompanyTeam(LoginRequiredMixin, TemplateView):
     template_name = 'company/projects.html'
 
