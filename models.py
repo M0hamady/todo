@@ -8,7 +8,6 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth.models import AbstractUser
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from todo.google_eve import add_event_to_google_calendar
 
 from todo.slck import create_slack_channel, send_slack_notification
 
@@ -781,7 +780,6 @@ class Meeting(models.Model):
             raise ValidationError("Overlapping meetings detected within the same sprint/task.")
 
         # Add meeting event to Google Calendar and send notifications
-        # google_calendar_link = add_event_to_google_calendar(self)
         channel = "#telefreik-meetings"  # Replace with your desired channel name
         message = f"The meeting has been scheduled: {self}\nGoogle Calendar Event: {google_calendar_link}"
         send_slack_notification(channel, message)
