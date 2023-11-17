@@ -7,6 +7,7 @@ from django.shortcuts import get_object_or_404, render
 from django.contrib.auth.views import LoginView
 from todo.forms import RegisterForm
 from todo.serializers import CompanyDetailSerializer, CompanyDetailsSerializer, CompanySerializer, ProjectRoadMapMiniSerializer, ProjectRoadMapSerializer, ProjectRoadMapSprintSerializer, ProjectWithRoadMapSerializer, SprintSerializer, TaskSerializer
+from todo.slck import send_slack_notification
 from.models import Company, Duration, Employee, Meeting, Project, RoadMapItem, Section, Sprint, Task, TaskComment, TaskDuration, TaskFeedback
 import datetime
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -96,6 +97,7 @@ def check_redirect(user):
         return redirect("profile")
     elif is_company:
         return redirect('company')
+    else: return redirect("profile") 
 def check_if_employee(user):
     is_employee= 0
     is_company =0
@@ -482,7 +484,6 @@ class TaskList(LoginRequiredMixin,ListView):
 
         print(tasks)
         return tasks[::-1]
-    
 def change_status(request, pk):
     user = request.user
     employee = get_object_or_404(Employee, user=user)
@@ -490,8 +491,7 @@ def change_status(request, pk):
     tasks = Task.objects.filter(assigned_to=employee)
     current_time = timezone.now()
     ongoing_duration = Duration.objects.filter(task=task, assigned_to=employee, end_time__isnull=True).last()
-    print('ongoing_duration', ongoing_duration)
-    
+    send_slack_notification("#improving-systems", f"Task: {task.title}\nUser: {user.username}\nTime: {current_time}\nStatus: {'Stopped' if ongoing_duration else 'Started'}")
     if not ongoing_duration:
         duration = Duration.objects.create(task=task, start_time=current_time)
         duration.assigned_to.add(employee)

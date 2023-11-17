@@ -6,6 +6,12 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth.models import AbstractUser
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from todo.google_eve import add_event_to_google_calendar
+
+from todo.slck import create_slack_channel, send_slack_notification
+
 class UserProfile(models.Model):
    user = models.OneToOneField(User,on_delete=models.CASCADE)
    phone = models.CharField(max_length=256, blank=True, null=True)
@@ -48,7 +54,7 @@ class Company(models.Model):
     admin_company = models.ForeignKey(AdminCompany, on_delete=models.SET_NULL,null=True,default=1)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     is_active = models.BooleanField(default=True)
-    
+    slack_channel = models.CharField(max_length=255, blank=True, null=True)
     # Add other fields specific to a company
 
     def __str__(self):
@@ -81,7 +87,17 @@ class Company(models.Model):
 
     def get_all_non_completed_tasks(self):
         return Task.objects.filter(company=self, completed=False) 
-    
+@receiver(post_save, sender=Company)
+def create_slack_channel_for_company(sender, instance, created, **kwargs):
+    if created:
+        # Generate a unique channel name based on the company's UUID
+        channel_name = f"company-{instance.uuid}"
+        
+        # Create the Slack channel
+        instance.slack_channel = create_slack_channel(channel_name)
+        
+        # Save the channel name in the Company model
+        instance.save()
     
 class Project(models.Model):
     name = models.CharField(max_length=100)
@@ -720,19 +736,28 @@ class Sprint(models.Model):
 from django.core.exceptions import ValidationError
 
 class Meeting(models.Model):
-    sprint = models.ForeignKey(Sprint, on_delete=models.SET_NULL,null=True,blank=True) 
-    task = models.ForeignKey(Task, on_delete=models.SET_NULL,null=True,blank=True) # updated need to add to live
+    sprint = models.ForeignKey(Sprint, on_delete=models.SET_NULL, null=True, blank=True)
+    task = models.ForeignKey(Task, on_delete=models.SET_NULL, null=True, blank=True)
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
-    meeting_link = models.CharField(max_length = 300,null=True,blank=True)
-   
+    meeting_link = models.CharField(max_length=300, null=True, blank=True)
+
     def __str__(self):
         return f"Meeting for {self.sprint} ({self.start_time} - {self.end_time})"
+
     def clean(self):
         super().clean()
 
         if self.start_time >= self.end_time:
             raise ValidationError("Start time should be before end time.")
+
+        if self.pk is not None:  # Check if the meeting is being updated
+            if self.start_time < timezone.now():  # Check if the meeting time is in the past
+                # Send Slack notification as an update for meeting data
+                channel = "#telefreik-meetings"  # Replace with your desired channel name
+                message = f"The meeting data has been updated: {self}"
+                send_slack_notification(channel, message, is_update=True)
+                return  # Skip the remaining validation for updates in the past
 
         overlapping_meetings = Meeting.objects.filter(
             sprint=self.sprint,
@@ -742,6 +767,7 @@ class Meeting(models.Model):
 
         if self.pk:
             overlapping_meetings = overlapping_meetings.exclude(pk=self.pk)
+
         overlapping_meetings2 = Meeting.objects.filter(
             task=self.task,
             start_time__lt=self.end_time,
@@ -749,11 +775,16 @@ class Meeting(models.Model):
         )
 
         if self.pk:
-            overlapping_meetings2 = overlapping_meetings.exclude(pk=self.pk)
+            overlapping_meetings2 = overlapping_meetings2.exclude(pk=self.pk)
 
         if overlapping_meetings.exists() or overlapping_meetings2.exists():
             raise ValidationError("Overlapping meetings detected within the same sprint/task.")
 
+        # Add meeting event to Google Calendar and send notifications
+        # google_calendar_link = add_event_to_google_calendar(self)
+        channel = "#telefreik-meetings"  # Replace with your desired channel name
+        message = f"The meeting has been scheduled: {self}\nGoogle Calendar Event: {google_calendar_link}"
+        send_slack_notification(channel, message)
 
 from django.contrib.auth.models import  Group, Permission
 
