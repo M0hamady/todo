@@ -94,6 +94,41 @@ def check_redirect(user):
         return redirect("profile")
     elif is_company:
         return redirect('company')
+def check_if_employee(user):
+    try:
+        is_employee = Employee.objects.get(user=user)
+        print("is_employee")
+        is_employee = 1
+    except:
+        try:
+            is_company = Company.objects.get(user=user)
+            print("is_company")
+            is_company = 1
+        except:
+            pass
+    
+    if is_employee:
+        return True
+    elif is_company:
+        return False
+def check_if_company(user):
+    try:
+        is_employee = Employee.objects.get(user=user)
+        print("is_employee")
+        is_employee = 1
+    except:
+        try:
+            is_company = Company.objects.get(user=user)
+            print("is_company")
+            is_company = 1
+        except:
+            pass
+    
+    if is_employee:
+        return False
+    elif is_company:
+        return True
+    
 def send_notification_to_user(user , title, body):
     # Retrieve the FCM token for the user
     client_token = get_object_or_404(FCMToken, user=user).fcm_token
@@ -225,28 +260,28 @@ class ProfileCompanyTimeLine(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         company = get_object_or_404(Company, user=self.request.user)
         meetings = set()
-        
-        tasks = Task.objects.filter(company=company)
-        
-        for task in tasks:
-            try:
-                meeting = Meeting.objects.filter(task=task).first()
-                if meeting and meeting.id not in meetings:
-                    meetings.add(meeting)
-            except:
-                pass
+        if check_if_company(user=self.request.user):
+            tasks = Task.objects.filter(company=company)
+            
+            for task in tasks:
+                try:
+                    meeting = Meeting.objects.filter(task=task).first()
+                    if meeting and meeting.id not in meetings:
+                        meetings.add(meeting)
+                except:
+                    pass
 
-        current_datetime = datetime.datetime.now()
-        current_meetings = Meeting.objects.filter(start_time__lte=current_datetime, )
-        meetings.update(current_meetings)
-        
-        context['meetings'] = meetings
+            current_datetime = datetime.datetime.now()
+            current_meetings = Meeting.objects.filter(start_time__lte=current_datetime, )
+            meetings.update(current_meetings)
+            
+            context['meetings'] = meetings
 
-        current_meeting = Meeting.objects.filter(start_time__lte=current_datetime, end_time__gte=current_datetime)
-        context['current_meeting'] = current_meeting
-        
-        return context
-
+            current_meeting = Meeting.objects.filter(start_time__lte=current_datetime, end_time__gte=current_datetime)
+            context['current_meeting'] = current_meeting
+            
+            return context
+        else:return redirect('profile')
 class ProfileCompanyTeam(LoginRequiredMixin, TemplateView):
     template_name = 'company/projects.html'
 
