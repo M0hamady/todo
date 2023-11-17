@@ -87,7 +87,8 @@ class Project(models.Model):
     name = models.CharField(max_length=100)
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-
+    live_url = models.CharField(max_length=120,null=True,blank=True)
+    demo_url = models.CharField(max_length=120,null=True,blank=True)
     def __str__(self):
         return self.name
     def sprints(self):

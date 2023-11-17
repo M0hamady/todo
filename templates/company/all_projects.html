@@ -22,7 +22,7 @@
       <!--/ Navbar pills -->
 
       <!-- Teams Cards -->
-      <div class="row g-4" id="container">
+      <div class="row g-4 " id="container">
         {% for project in  projects %}
         <div class="col-xl-4 col-md-6 mb-4">
           <div class="card h-100">
@@ -31,7 +31,7 @@
                 <h5 class="m-0 me-2">{{project}}</h5>
                 <small class="text-muted">Preview</small>
               </div>
-              {% comment %} <div class="dropdown">
+              <div class="dropdown">
                 <button
                   class="btn p-0"
                   type="button"
@@ -43,11 +43,11 @@
                   <i class="ti ti-dots-vertical ti-sm text-muted"></i>
                 </button>
                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="earningReports">
-                  <a class="dropdown-item" href="javascript:void(0);">Download</a>
-                  <a class="dropdown-item" href="javascript:void(0);">Refresh</a>
-                  <a class="dropdown-item" href="javascript:void(0);">Share</a>
+                  {% if project.live_url %}<a class="dropdown-item" href="{{project.live_url}}">Live</a>{% endif %}
+                  {% if project.demo_url %}<a class="dropdown-item" href="{{project.demo_url}}">Demo</a>{% endif %}
+                  {% comment %} <a class="dropdown-item" href="javascript:void(0);">TimeLine</a> {% endcomment %}
                 </div>
-              </div> {% endcomment %}
+              </div>
             </div>
             <div class="card-body pb-0">
               <ul class="p-0 m-0">

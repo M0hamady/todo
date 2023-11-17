@@ -78,6 +78,8 @@ def check_sav_fcm(request,token):
     return fcm_token
 
 def check_redirect(user):
+    is_employee= 0
+    is_company =0
     try:
         is_employee = Employee.objects.get(user=user)
         print("is_employee")
@@ -95,6 +97,8 @@ def check_redirect(user):
     elif is_company:
         return redirect('company')
 def check_if_employee(user):
+    is_employee= 0
+    is_company =0
     try:
         is_employee = Employee.objects.get(user=user)
         print("is_employee")
@@ -112,6 +116,8 @@ def check_if_employee(user):
     elif is_company:
         return False
 def check_if_company(user):
+    is_employee= 0
+    is_company =0
     try:
         is_employee = Employee.objects.get(user=user)
         print("is_employee")
@@ -168,12 +174,15 @@ def send_notification_to_user(user , title, body):
 
 class Profile(LoginRequiredMixin, TemplateView):
     template_name = 'registration/profile.html'
-
+    def dispatch(self, request, *args, **kwargs):
+        if not check_if_employee(request.user):
+            return redirect('company')  # Replace 'company' with the URL or name of the page you want to redirect to
+        return super().dispatch(request, *args, **kwargs)
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         employee = Employee.objects.filter(user=self.request.user).first()
-        check_redirect(self.request.user)
-        if employee:
+        
+        if employee :
             tasks = Task.objects.filter(assigned_to=employee)
             def calculate_duration_current_month():
                 durations = Duration.objects.filter(assigned_to= employee).values()
@@ -227,8 +236,8 @@ class Profile(LoginRequiredMixin, TemplateView):
             activity_timeLine = sorted(activity_timeLine, key=lambda x: x['name'])
             context['employee'] = employee
             context['month_durations'] = calculate_duration_current_month()
-            context['tasks'] = tasks
-            context['activity_timeLine'] = activity_timeLine
+            context['tasks'] = tasks[::-1]
+            context['activity_timeLine'] = activity_timeLine[::-1]
 
             ip_address = self.request.META.get('REMOTE_ADDR')
             location = geocoder.ip(ip_address)
@@ -244,18 +253,24 @@ class Profile(LoginRequiredMixin, TemplateView):
         return context
 class ProfileCompanyProjects(LoginRequiredMixin, TemplateView):
     template_name = 'company/all_projects.html'
-
+    def dispatch(self, request, *args, **kwargs):
+        if check_if_employee(request.user):
+            return redirect('profile')  # Replace 'company' with the URL or name of the page you want to redirect to
+        return super().dispatch(request, *args, **kwargs)
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         check_redirect(self.request.user)
         company = get_object_or_404(Company, user=self.request.user)
         projects= Project.objects.filter(company=company)
         # print(context)
-        context['projects'] = projects
+        context['projects'] = projects[::-1]
         return context
 class ProfileCompanyTimeLine(LoginRequiredMixin, TemplateView):
     template_name = 'company/meetings.html'
-
+    def dispatch(self, request, *args, **kwargs):
+        if check_if_employee(request.user):
+            return redirect('profile')  # Replace 'company' with the URL or name of the page you want to redirect to
+        return super().dispatch(request, *args, **kwargs)
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         company = get_object_or_404(Company, user=self.request.user)
@@ -275,16 +290,19 @@ class ProfileCompanyTimeLine(LoginRequiredMixin, TemplateView):
             current_meetings = Meeting.objects.filter(start_time__lte=current_datetime, )
             meetings.update(current_meetings)
             
-            context['meetings'] = meetings
+            context['meetings'] = meetings[::-1]
 
             current_meeting = Meeting.objects.filter(start_time__lte=current_datetime, end_time__gte=current_datetime)
-            context['current_meeting'] = current_meeting
+            context['current_meeting'] = current_meeting[::-1]
             
             return context
         else:return redirect('profile')
 class ProfileCompanyTeam(LoginRequiredMixin, TemplateView):
     template_name = 'company/projects.html'
-
+    def dispatch(self, request, *args, **kwargs):
+        if check_if_employee(request.user):
+            return redirect('profile')  # Replace 'company' with the URL or name of the page you want to redirect to
+        return super().dispatch(request, *args, **kwargs)
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         company = get_object_or_404(Company, user=self.request.user)
@@ -300,7 +318,7 @@ class ProfileCompanyTeam(LoginRequiredMixin, TemplateView):
                                     'tasks': Task.objects.filter(sprints=new_sprint),
                                     'dates': new_sprint.dates_data()})
         
-        context['sprints'] = sprints
+        context['sprints'] = sprints[::-1]
         # print(context)
         return context
     
@@ -329,16 +347,24 @@ def add_feed_task(request):
         for sprint in task.sprints.all().values():
             sprint_id = sprint['id']
             new_sprint = get_object_or_404(Sprint, id=sprint_id)
-            if sprint_id not in [sprinted['sprint'].id for sprinted in sprints]:
-                sprints.append({'sprint': new_sprint,
+            for sprint in task.sprints.all().values():
+                sprint_id = sprint['id']
+                new_sprint = get_object_or_404(Sprint, id=sprint_id)
+                if sprint_id not in [sprinted['sprint'].id for sprinted in sprints]:
+                    sprints.append({'sprint': new_sprint,
                                     'tasks': Task.objects.filter(sprints=new_sprint),
                                     'dates': new_sprint.dates_data()})
+        
     context= {}     
-    context['sprints'] = sprints
+    context['sprints'] = sprints[::-1]
     # return template fragment with all the user's films
     return render(request, 'registration/profile_partial/list_links _company.html', context=context)
 class ProfileTeam(LoginRequiredMixin,TemplateView):
     template_name = 'registration/profile_teams.html'
+    def dispatch(self, request, *args, **kwargs):
+        if not check_if_employee(request.user):
+            return redirect('company')  # Replace 'company' with the URL or name of the page you want to redirect to
+        return super().dispatch(request, *args, **kwargs)
     def get_context_data(self, **kwargs: Any):
         context = super().get_context_data(**kwargs)
         employee = Employee.objects.filter(user=self.request.user).first()
@@ -351,12 +377,15 @@ class ProfileTeam(LoginRequiredMixin,TemplateView):
                     # new_sprint['dates_data'] = new_sprint.dates_data()
                     if new_sprint not in sprints:
                         sprints.append({'sprint':new_sprint,'tasks':Task.objects.filter(sprints=new_sprint),"dates":new_sprint.dates_data()})
-            context['sprints'] = sprints
+            context['sprints'] = sprints[::-1]
         # print(context['sprints'])
         return context
 class ProfileProjects(LoginRequiredMixin,TemplateView):
     template_name = 'registration/profile_projects.html'
-
+    def dispatch(self, request, *args, **kwargs):
+        if not check_if_employee(request.user):
+            return redirect('company')  # Replace 'company' with the URL or name of the page you want to redirect to
+        return super().dispatch(request, *args, **kwargs)
     def get_context_data(self, **kwargs: Any):
         context = super().get_context_data(**kwargs)
         employee = Employee.objects.filter(user=self.request.user).first()
@@ -369,7 +398,7 @@ class ProfileProjects(LoginRequiredMixin,TemplateView):
                     # new_sprint['dates_data'] = new_sprint.dates_data()
                     if new_sprint not in sprints:
                         sprints.append({'sprint':new_sprint,'tasks':new_sprint.tasks(),"dates":new_sprint.dates_data()})
-            context['sprints'] = sprints
+            context['sprints'] = sprints[::-1]
             
         return context
 
@@ -452,7 +481,7 @@ class TaskList(LoginRequiredMixin,ListView):
             tasks.append({"task":task, "last_duration":last_durations})
 
         print(tasks)
-        return tasks
+        return tasks[::-1]
     
 def change_status(request, pk):
     user = request.user
