@@ -735,15 +735,14 @@ class Sprint(models.Model):
 from django.core.exceptions import ValidationError
 
 class Meeting(models.Model):
-    sprint = models.ForeignKey(Sprint, on_delete=models.SET_NULL, null=True, blank=True)
-    task = models.ForeignKey(Task, on_delete=models.SET_NULL, null=True, blank=True)
+    sprint = models.ForeignKey(Sprint, on_delete=models.SET_NULL,null=True,blank=True) 
+    task = models.ForeignKey(Task, on_delete=models.SET_NULL,null=True,blank=True) # updated need to add to live
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
-    meeting_link = models.CharField(max_length=300, null=True, blank=True)
-
+    meeting_link = models.CharField(max_length = 300,null=True,blank=True)
+   
     def __str__(self):
         return f"Meeting for {self.sprint} ({self.start_time} - {self.end_time})"
-
     def clean(self):
         super().clean()
 
@@ -778,12 +777,6 @@ class Meeting(models.Model):
 
         if overlapping_meetings.exists() or overlapping_meetings2.exists():
             raise ValidationError("Overlapping meetings detected within the same sprint/task.")
-
-        # Add meeting event to Google Calendar and send notifications
-        channel = "#telefreik-meetings"  # Replace with your desired channel name
-        message = f"The meeting has been scheduled: {self}\nGoogle Calendar Event: {google_calendar_link}"
-        send_slack_notification(channel, message)
-
 from django.contrib.auth.models import  Group, Permission
 
 class User(AbstractUser):

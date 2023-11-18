@@ -269,16 +269,19 @@ class ProfileCompanyProjects(LoginRequiredMixin, TemplateView):
         return context
 class ProfileCompanyTimeLine(LoginRequiredMixin, TemplateView):
     template_name = 'company/meetings.html'
+    
     def dispatch(self, request, *args, **kwargs):
         if check_if_employee(request.user):
-            return redirect('profile')  # Replace 'company' with the URL or name of the page you want to redirect to
+            return redirect('profile')
         return super().dispatch(request, *args, **kwargs)
+    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         company = get_object_or_404(Company, user=self.request.user)
-        meetings = set()
+        
         if check_if_company(user=self.request.user):
             tasks = Task.objects.filter(company=company)
+            meetings = set()
             
             for task in tasks:
                 try:
@@ -289,16 +292,17 @@ class ProfileCompanyTimeLine(LoginRequiredMixin, TemplateView):
                     pass
 
             current_datetime = datetime.datetime.now()
-            current_meetings = Meeting.objects.filter(start_time__lte=current_datetime, )
+            current_meetings = Meeting.objects.filter(start_time__lte=current_datetime)
             meetings.update(current_meetings)
             
-            context['meetings'] = meetings[::-1]
-
+            context['meetings'] = list(meetings)[::-1]
+            
             current_meeting = Meeting.objects.filter(start_time__lte=current_datetime, end_time__gte=current_datetime)
-            context['current_meeting'] = current_meeting[::-1]
+            context['current_meeting'] = list(current_meeting)[::-1]
             
             return context
-        else:return redirect('profile')
+        else:
+            return redirect('profile')
 class ProfileCompanyTeam(LoginRequiredMixin, TemplateView):
     template_name = 'company/projects.html'
     def dispatch(self, request, *args, **kwargs):
