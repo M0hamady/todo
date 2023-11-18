@@ -756,6 +756,7 @@ class Meeting(models.Model):
                 message = f"The meeting data has been updated: {self}"
                 send_slack_notification(channel, message, is_update=True)
                 return  # Skip the remaining validation for updates in the past
+            send_slack_notification(channel, message, is_update=False)
 
         overlapping_meetings = Meeting.objects.filter(
             sprint=self.sprint,
