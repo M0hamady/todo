@@ -69,7 +69,7 @@
             <span class="badge {% if task.last_duration.end_time %}bg-label-success {% else %} bg-label-danger {% endif %} ms-auto cursor-pointer " hx-post="{% url 'change_status' task.task.pk %}"   hx-target= "this" hx-swap = "outerhtml" hx-trigger="click" id="btn{{task.task.pk}}" >{% if task.task.is_any_opened_duration %}stop {% else %} start{% endif %}</span>
           </div>
            <div id="status{{task.task.id}}" >
-            <div>M</div>
+            <div id="task_{{task.task.uuid}}">M</div>
           </div> 
           <div class="progress mb-2" style="height: 8px">
             <div
@@ -83,10 +83,17 @@
           </div>
           
           <div class="chat-history-footer shadow-sm">
-            <form class="form-send-message d-flex justify-content-between align-items-center">
+            <form class="form-send-message d-flex justify-content-between align-items-center"
+            hx-post="{% url 'add_comment_employee' task.task.uuid %}"
+            hx-target="#task_{{task.task.uuid}}"
+            hx-swap="innerHTML" 
+            hx-on::after-request="this.reset()"
+            
+            >
               <input
                 class="form-control message-input border-0 me-3 shadow-none"
                 placeholder="Type your message here"
+                name="comment"
               />
               <div class="message-actions d-flex align-items-center">
                 {% comment %} <i class="speech-to-text ti ti-microphone ti-sm cursor-pointer"></i>
@@ -96,7 +103,7 @@
                 </label> {% endcomment %}
                 <button class="btn btn-primary d-flex send-msg-btn">
                   <i class="ti ti-send me-md-1 me-0"></i>
-                  <span class="align-middle d-md-inline-block d-none">Send</span>
+                  <span class="align-middle d-md-inline-block d-none" type="submit">Send</span>
                 </button>
               </div>
             </form>

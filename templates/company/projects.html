@@ -103,7 +103,7 @@
                           <div class="modal-content text-center">
                             <div class="modal-header border-0">
                               <a class="text-muted close-label" href="javascript:void(0);" data-bs-dismiss="modal"
-                                >Skip Intro</a
+                                >refresh</a
                               >
                               <button
                                 type="button"
@@ -117,31 +117,29 @@
                               class="carousel slide pb-4 mb-2"
                               data-bs-interval="false"
                             >
+                            <div class="onboarding-media">
+                              <img
+                                src="{% static 'assets/img/illustrations/boy-with-rocket-light.png' %}"
+                                alt="boy-with-rocket-light"
+                                width="273"
+                                class="img-fluid"
+                                data-app-light-img="illustrations/boy-with-rocket-light.png"
+                                data-app-dark-img="illustrations/boy-with-rocket-dark.png"
+                              />
+                            </div> 
                                 {% for feed in task.feedbacks  %}
                                
-                              <div class="carousel-inner ">
-                                <div class="carousel-item active">
-                                  <div class="onboarding-horizontal">
-                                    <div class="onboarding-media">
-                                      <img
-                                        src="{% static 'assets/img/illustrations/boy-with-rocket-light.png' %}"
-                                        alt="boy-with-rocket-light"
-                                        width="273"
-                                        class="img-fluid"
-                                        data-app-light-img="illustrations/boy-with-rocket-light.png"
-                                        data-app-dark-img="illustrations/boy-with-rocket-dark.png"
-                                      />
-                                    </div>
-                        ش              
-                                    <h4 class="onboarding-title text-body">{{feed.task}}  </h4>
-                                    <div class="onboarding-info w-75">
-                                      {{feed.feedback_text}}
+                                <div class="col-md-12 col-xl-4">
+                                  <div class="card {% if feed.feedStatus == 'In-Dev' %} bg-secondary {% elif feed.feedStatus == 'In-Test' %} bg-warning {% else %} bg-success {% endif %}  text-white mb-3">
+                                    <div class="ms-3 badge col-md-1 bg-label-warning">+{{feed.calculate_feedback_completion_percentage}}%</div>
+                                    <div class="card-header">{{feed.task}}</div>
+
+                                    <div class="card-body">
+                                      <h5 class="card-title text-white">{{feed.feedback_text}}</h5>
+                                      <p class="card-text">{{feed.feedStatus}}</p>
                                     </div>
                                   </div>
                                 </div>
-                               
-                              </div>
-                             
                               {% endfor %}
                             </div>
 

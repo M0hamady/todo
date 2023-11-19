@@ -1,0 +1,269 @@
+{% extends 'base_company.html' %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block content %}
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-3 mb-4">
+      <span class="text-muted fw-light">{{project.company.name}}/</span> {{project.name}}
+    </h4>
+
+    <div class="row overflow-hidden">
+      <div class="col-12">
+        <ul class="timeline timeline-center mt-5">
+            {% if project.sprints  %} 
+            {% for sprint  in  project.sprints %}
+            <li class="timeline-item mb-4 border-1">
+                <span class="timeline-indicator timeline-indicator-info" data-aos="zoom-in" data-aos-delay="200">
+                  <i class="ti ti-building-store"></i>
+                </span>
+                <div class="timeline-event card p-0" data-aos="fade-right">
+                  <div class="card-header border-0 d-flex justify-content-between">
+                    <h6 class="card-title mb-0"><span class="align-middle">{{sprint.name}}</span></h6>
+                    <i class="ti ti-dots-vertical text-muted cursor-pointer"></i>
+                  </div>
+                  <div class="card-body pt-0">
+                    <p>
+                        {{sprint.purpose}}.
+                    </p>
+                    <div class="d-flex flex-wrap flex-sm-row flex-column">
+                      <div class="mb-sm-0 mb-3 me-5">
+                        <p class="text-muted mb-2">tasks</p>
+                        <div class="d-flex align-items-center">
+                            {% for task in sprint.tasks %}
+                          <div class="avatar avatar-xs me-2">
+                            <span class="avatar-initial rounded-circle bg-label-primary">T</span>
+                          </div>
+                          {% endfor %}
+                          
+                        </div>
+                        
+                      </div>
+                      <div class="mb-sm-0 mb-3 me-5">
+                        <p class="text-muted mb-2">Deadline</p>
+                        <p class="mb-0">{{sprint.end_date}}</p>
+                      </div>
+                      <div>
+                        <p class="text-muted mb-2">Start Date</p>
+                        <p class="mb-0">{{sprint.start_date}}</p>
+                      </div>
+                    </div>
+                    <div class="d-flex align-items-center mt-1 w-100 justify-content-around">
+                        {% for meeting in sprint.meetings %}
+                      <div class="avatar avatar-xs me-5 ">
+                        <span class="badge rounded-pill bg-label-danger">M:{{meeting.start_time.date}}</span>
+                      </div>
+                      {% endfor %}
+                      
+                    </div>
+                  </div>
+                  <div class="timeline-event-time">25th January</div>
+                </div>
+              </li>
+          {% endfor %}
+          {% endif %}
+         
+          {% comment %} <li class="timeline-item pb-md-4 pb-5 timeline-item-right">
+            <span class="timeline-indicator timeline-indicator-info" data-aos="zoom-in" data-aos-delay="200">
+              <i class="ti ti-map-pin"></i>
+            </span>
+            <div class="timeline-event card p-0" data-aos="fade-left">
+              <div class="card-header border-0 d-flex justify-content-between">
+                <h6 class="card-title mb-0">
+                  <i class="ti ti-map-pin"></i>
+                  <span class="align-middle">Location</span>
+                </h6>
+                <span class="badge rounded-pill bg-label-danger">High</span>
+              </div>
+              <div class="card-body py-0">
+                <h6 class="mb-2">Final location for the company celebration.</h6>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas, quidem?</p>
+              </div>
+              <div class="card-footer d-flex justify-content-between">
+                <div class="d-flex align-items-center flex-wrap cursor-pointer gap-3">
+                  <i class="ti ti-link"></i>
+                  <div class="position-relative">
+                    <i class="ti ti-brand-hipchat"></i>
+                    <span class="badge rounded-pill bg-info badge-dot badge-notifications"></span>
+                  </div>
+                  <i class="ti ti-user"></i>
+                </div>
+                <p class="mb-0">
+                  <span class="text-muted">Due Date:</span>
+                  15th Jan
+                </p>
+              </div>
+              <div class="timeline-event-time">12th January</div>
+            </div>
+          </li>
+          <li class="timeline-item pb-md-4 pb-5 timeline-item-left">
+            <span
+              class="timeline-indicator timeline-indicator-primary"
+              data-aos="zoom-in"
+              data-aos-delay="200"
+            >
+              <i class="ti ti-barbell"></i>
+            </span>
+            <div class="timeline-event card p-0" data-aos="fade-right">
+              <div class="card-header border-0 d-flex justify-content-between">
+                <h6 class="card-title mb-0">Gym Program</h6>
+                <span class="text-muted">5:00 - 6:10AM</span>
+              </div>
+              <div class="card-body pb-3 pt-0">
+                <div class="hours mb-2">
+                  <i class="ti ti-clock"></i>
+                  <span>1.1 Hours</span>
+                  <i class="ti ti-arrows-right-left mx-2"></i>
+                  <span>Weekly</span>
+                </div>
+                <div class="location">
+                  <i class="ti ti-map-pin"></i>
+                  <span class="align-middle">Rock's Gym</span>
+                </div>
+              </div>
+              <div class="card-footer d-flex justify-content-between">
+                <div class="tags">
+                  <span class="badge rounded-pill bg-label-danger">Gym</span>
+                  <span class="badge rounded-pill bg-label-info">Power</span>
+                </div>
+                <div>
+                  <i class="ti ti-dots-vertical text-muted cursor-pointer"></i>
+                </div>
+              </div>
+              <div class="timeline-event-time">15th January</div>
+            </div>
+          </li>
+          <li class="timeline-item pb-md-4 pb-5">
+            <span
+              class="timeline-indicator timeline-indicator-success"
+              data-aos="zoom-in"
+              data-aos-delay="200"
+            >
+              <i class="ti ti-currency-dollar"></i>
+            </span>
+            <div class="timeline-event card p-0" data-aos="fade-right">
+              <h6 class="card-header">General Reserve</h6>
+              <div class="card-body">
+                <ul class="list-unstyled">
+                  <li class="d-flex justify-content-start align-items-center text-success mb-3">
+                    <i class="ti ti-currency-dollar ti-sm me-3"></i>
+                    <div class="ps-3 border-start">
+                      <small class="text-muted mb-1">Cash</small>
+                      <h5 class="mb-0">$500</h5>
+                    </div>
+                  </li>
+                  <li class="d-flex justify-content-start align-items-center text-info mb-3">
+                    <i class="ti ti-credit-card ti-sm me-3"></i>
+                    <div class="ps-3 border-start">
+                      <small class="text-muted mb-1">Credit Card</small>
+                      <h5 class="mb-0">$5000</h5>
+                    </div>
+                  </li>
+                  <li class="d-flex justify-content-start align-items-center text-primary">
+                    <i class="ti ti-chart-line ti-sm me-3"></i>
+                    <div class="ps-3 border-start">
+                      <small class="text-muted mb-1">Investments</small>
+                      <h5 class="mb-0">$300</h5>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+              <div class="timeline-event-time">16th January</div>
+            </div>
+          </li>
+          <li class="timeline-item pb-md-4 pb-5">
+            <span
+              class="timeline-indicator timeline-indicator-danger"
+              data-aos="zoom-in"
+              data-aos-delay="200"
+            >
+              <i class="ti ti-server"></i>
+            </span>
+            <div class="timeline-event card p-0" data-aos="fade-left">
+              <div class="card-header border-0 d-flex justify-content-between">
+                <h6 class="card-title mb-0">
+                  <span class="align-middle">Ubuntu Server</span>
+                </h6>
+                <span class="badge rounded-pill bg-label-danger">Inactive</span>
+              </div>
+              <div class="card-body pb-2 pt-0">
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item d-flex justify-content-between align-items-center ps-0">
+                    <div>
+                      <i class="ti ti-world"></i>
+                      <span>IP Address</span>
+                    </div>
+                    <div>192.654.8.566</div>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-between align-items-center ps-0">
+                    <div>
+                      <i class="ti ti-cpu"></i>
+                      <span>CPU</span>
+                    </div>
+                    <div>4 Cores</div>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-between align-items-center ps-0">
+                    <div>
+                      <i class="ti ti-server"></i>
+                      <span>Ram</span>
+                    </div>
+                    <div>500 MB</div>
+                  </li>
+                </ul>
+              </div>
+              <div class="card-footer d-flex justify-content-between">
+                <div class="server-icons">
+                  <i class="ti ti-share me-2"></i>
+                  <i class="ti ti-refresh"></i>
+                </div>
+              </div>
+              <div class="timeline-event-time">20th January</div>
+            </div>
+          </li>
+          <li class="timeline-item mb-4 border-0">
+            <span class="timeline-indicator timeline-indicator-info" data-aos="zoom-in" data-aos-delay="200">
+              <i class="ti ti-building-store"></i>
+            </span>
+            <div class="timeline-event card p-0" data-aos="fade-right">
+              <div class="card-header border-0 d-flex justify-content-between">
+                <h6 class="card-title mb-0"><span class="align-middle">Online Store</span></h6>
+                <i class="ti ti-dots-vertical text-muted cursor-pointer"></i>
+              </div>
+              <div class="card-body pt-0">
+                <p>
+                  Develop an online store of electronic devices for the provided layout, as well as develop a
+                  mobile version of it. The must be compatible with any CMS.
+                </p>
+                <div class="d-flex flex-wrap flex-sm-row flex-column">
+                  <div class="mb-sm-0 mb-3 me-5">
+                    <p class="text-muted mb-2">Developers</p>
+                    <div class="d-flex align-items-center">
+                      <div class="avatar avatar-xs me-2">
+                        <span class="avatar-initial rounded-circle bg-label-primary">A</span>
+                      </div>
+                      <div class="avatar avatar-xs me-2">
+                        <span class="avatar-initial rounded-circle bg-label-success">B</span>
+                      </div>
+                      <div class="avatar avatar-xs">
+                        <span class="avatar-initial rounded-circle bg-label-danger">C</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="mb-sm-0 mb-3 me-5">
+                    <p class="text-muted mb-2">Deadline</p>
+                    <p class="mb-0">20 Dec 2077</p>
+                  </div>
+                  <div>
+                    <p class="text-muted mb-2">Budget</p>
+                    <p class="mb-0">$50000</p>
+                  </div>
+                </div>
+              </div>
+              <div class="timeline-event-time">25th January</div>
+            </div>
+          </li> {% endcomment %}
+        </ul>
+      </div>
+    </div>
+  </div>
+{% endblock content %}

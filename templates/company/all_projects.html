@@ -45,6 +45,7 @@
                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="earningReports">
                   {% if project.live_url %}<a class="dropdown-item" href="{{project.live_url}}">Live</a>{% endif %}
                   {% if project.demo_url %}<a class="dropdown-item" href="{{project.demo_url}}">Demo</a>{% endif %}
+                  {% if project.road_map %}<a class="dropdown-item" href="{% url "road_map" project.uuid %}">road_map</a>{% endif %}
                   {% comment %} <a class="dropdown-item" href="javascript:void(0);">TimeLine</a> {% endcomment %}
                 </div>
               </div>

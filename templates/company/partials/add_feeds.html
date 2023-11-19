@@ -16,7 +16,7 @@
       <div class="onboarding-info">
         "We appreciate your feedback and acknowledge the obstacles we face. Rest assured, we're committed to overcoming them and delivering an exceptional user experience."
       </div>
-      <form hx-post="{% url 'add-feed' %}" hx-target='#tasklist'>
+      <form hx-post="{% url 'add-feed' %}" hx-target='#nameEx7' hx-swap="outerHTML" class="">
         {% csrf_token %}
         <div class="row">
           <div class="col-sm-6">
@@ -24,7 +24,7 @@
               <label for="nameEx7" class="form-label">Your Feedback</label>
               <input hidden name="task_id" value="{{task.id}}" />
               <input
-                class="form-control"
+                class="form-control "
                 placeholder="Enter your Feed..."
                 type="text"
                 value=""
