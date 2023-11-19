@@ -21,6 +21,7 @@ from .views import (
     RegisterView,
     TaskDurationAPIView,
     TaskList,
+    add_comment_task,
     add_feed_task,
     calculate_total_duration,
     EmployeeTaskView,
@@ -29,6 +30,7 @@ from .views import (
     change_status,
     check_sav_fcm,
     check_username,
+    Road_map,
     showFirebaseJS,
     task_comments,
 )
@@ -41,6 +43,7 @@ cred = credentials.Certificate(service_account_file)
 firebase_admin.initialize_app(cred)
 urlpatterns = [
     path('employee/login/', Login.as_view(), name='login'),
+    path('project/road-map/<uuid:project_uuid>/', Road_map.as_view(), name='road_map'),
     path('company/', ProfileCompanyTeam.as_view(), name='company'),
     path('company/projects', ProfileCompanyProjects.as_view(), name='company_projects'),
     path('company/meetings', ProfileCompanyTimeLine.as_view(), name='company_meetings'),
@@ -72,6 +75,8 @@ hmtx_views = [
     path("check-username/", check_username, name='check-username'),
     path('change-status/<int:pk>/', change_status, name='change_status'),
     path('task-comments/<int:pk/', task_comments, name='task_comments'),
+    
+    path('employee/add-comment/<str:uuid>/', add_comment_task, name='add_comment_employee'),
     path('add-feed/', add_feed_task, name='add-feed')
     # path('delete-film/<int:pk>/', views.delete_film, name='delete-film')
 ]

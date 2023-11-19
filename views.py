@@ -328,6 +328,22 @@ class ProfileCompanyTeam(LoginRequiredMixin, TemplateView):
         # print(context)
         return context
     
+def add_comment_task(request,uuid):
+    task  = Task.objects.get(uuid=uuid)
+    comment_text =request.POST.get('comment')
+
+    comment = TaskComment.objects.create(
+        task = task,
+        employee = Employee.objects.get(user = request.user),
+        feedback_text  = comment_text
+    )
+    comment.save()
+    print("success")
+    context = {
+        "comment":comment
+    }
+    return HttpResponse(f"<div>{comment.feedback_text}<div>")
+
 def add_feed_task(request):
     id = request.POST.get('task_id')
     user = request.user
@@ -364,7 +380,7 @@ def add_feed_task(request):
     context= {}     
     context['sprints'] = sprints[::-1]
     # return template fragment with all the user's films
-    return render(request, 'registration/profile_partial/list_links _company.html', context=context)
+    return HttpResponse(f'<input class="form-control " placeholder="Enter your Feed..." type="text" value=""tabindex="0"name="feed"  id="nameEx7" />')
 class ProfileTeam(LoginRequiredMixin,TemplateView):
     template_name = 'registration/profile_teams.html'
     def dispatch(self, request, *args, **kwargs):
@@ -409,12 +425,28 @@ class ProfileProjects(LoginRequiredMixin,TemplateView):
         return context
 
 
+class Road_map(LoginRequiredMixin, TemplateView):
+    template_name = 'company/roadmap.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        if check_if_employee(request.user):
+            return redirect('profile')  # Replace 'profile' with the URL or name of the page you want to redirect to
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        project_uuid = self.kwargs.get('project_uuid')
+        if project_uuid:
+            project = get_object_or_404(Project, uuid=project_uuid)
+            context['project'] = project
+        return context
 def task_comments(request,pk):
     # search_text = request.POST.get('search')
     print(pk)
     comments = TaskComment.objects.filter(id= pk)
     context = {"comments": comments}
     return render(request, 'registration/profile_partial/list_tasks_update.html', context)
+
 
 # class TaskCommentsList(LoginRequiredMixin,ListView):
 #     template_name = 'home.html'
