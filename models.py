@@ -8,6 +8,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth.models import AbstractUser
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from colorfield.fields import ColorField
 
 from todo.slck import create_slack_channel, send_slack_notification
 
@@ -289,7 +290,8 @@ class Employee(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     is_active = models.BooleanField(default=True)
     number = models.CharField(max_length=13, null=True, blank=True)
-
+    slack_channel = models.CharField(max_length=25, null=True, blank=True)
+    
     def clean(self):
         # Validate the number field format
         pattern = r'^(012|015|011|010|016)-\d{4}-\d{4}$'  # Example format: 123-456-7890
@@ -671,7 +673,8 @@ class Sprint(models.Model):
     members = models.ManyToManyField(Member, related_name="sprint")
     employee = models.ManyToManyField(Employee, related_name="sprints")
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=False,null=True,blank=True)
-    
+    color = ColorField(default='#000000')  # Add color field with default value '#000000'
+
     def __str__(self):
         return self.name
     def tasks(self):

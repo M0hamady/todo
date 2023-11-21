@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+      <!-- Layout container -->
+    
+        <div class="content-wrapper">
+          <!-- Content -->
+
+          <div class="container-xxl flex-grow-1 container-p-y">
+            <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Add /</span> Films</h4>
+
+            <div class="row">
+           
+            
+              <!-- Form Repeater -->
+              <div class="col-12">
+                <div class="card">
+                  <h5 class="card-header">Form Repeater</h5>
+                  <div class="card-body">
+                    <form hx-post="{% url 'add-film' %}" hx-target='#film-list' class="form-repeater">
+                        {% csrf_token %}
+                        <div data-repeater-list="group-a">
+                        <div data-repeater-item>
+                          <div class="row">
+                            <div class="mb-3 col-lg-6 col-xl-3 col-12 mb-0">
+                              <label class="form-label" for="form-repeater-1-1">Username</label>
+                              <input type="text" type="text" name="filmname" id="form-repeater-1-1" class="form-control" placeholder="film name" />
+                            </div>
+                            
+                             
+                          </div>
+                          <hr />
+                        </div>
+                      </div>
+                      <div class="mb-0">
+                        <button class="btn btn-primary " type="submit">
+                          <i class="ti ti-plus me-1"></i>
+                          <span class="align-middle">Add</span>
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- /Form Repeater -->
+            </div>
+        </div>
+        <!-- / Content -->
+        
+        
+        <div id="film-list">
+              {% include 'partials/component/table.html' with name='Film' head_names=films items=films %}
+        </div>
+          <div class="content-backdrop fade"></div>
+        </div>
+        <!-- Content wrapper -->
+      
+
+    <!-- Overlay -->
+  </div>
+{% lorem 2 p %}
+
+{% endblock content %}

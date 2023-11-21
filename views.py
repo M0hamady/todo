@@ -303,6 +303,16 @@ class ProfileCompanyTimeLine(LoginRequiredMixin, TemplateView):
             return context
         else:
             return redirect('profile')
+from django.contrib import messages
+
+class CalendarView(TemplateView):
+    template_name = 'company/calendar.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['tasks'] = Task.objects.all()
+        context['sprints'] = Sprint.objects.all()
+        return context
 class ProfileCompanyTeam(LoginRequiredMixin, TemplateView):
     template_name = 'company/projects.html'
     def dispatch(self, request, *args, **kwargs):
@@ -338,7 +348,8 @@ def add_comment_task(request,uuid):
         feedback_text  = comment_text
     )
     comment.save()
-    print("success")
+    if comment.employee.slack_channel:
+        send_slack_notification(comment.employee.slack_channel)
     context = {
         "comment":comment
     }
@@ -520,6 +531,25 @@ class TaskList(LoginRequiredMixin,ListView):
 
         print(tasks)
         return tasks[::-1]
+def all_events(request):
+    # Get the sprint filter from the request parameters
+    events = Sprint.objects.all()
+
+    out = []
+    for event in events:
+        # Generate event data
+        out.append({
+            'title': event.name,
+            'id': event.id,
+            'start': event.start_date.strftime("%m/%d/%Y, %H:%M:%S"),
+            'end': event.end_date.strftime("%m/%d/%Y, %H:%M:%S"),
+            'tasks': len(event.tasks()),
+            'meetings': len(event.meetings()),
+            'percentage': event.get_percentage(),
+            'color': event.color,
+        })
+
+    return JsonResponse(out, safe=False)
 def change_status(request, pk):
     user = request.user
     employee = get_object_or_404(Employee, user=user)
@@ -527,7 +557,8 @@ def change_status(request, pk):
     tasks = Task.objects.filter(assigned_to=employee)
     current_time = timezone.now()
     ongoing_duration = Duration.objects.filter(task=task, assigned_to=employee, end_time__isnull=True).last()
-    send_slack_notification("#improving-systems", f"Task: {task.title}\nUser: {user.username}\nTime: {current_time}\nStatus: {'Stopped' if ongoing_duration else 'Started'}")
+    if task.company.slack_channel:
+        send_slack_notification(task.company.slack_channel, f"Task: {task.title}\nUser: {user.username}\nTime: {current_time}\nStatus: {'Stopped' if ongoing_duration else 'Started'}")
     if not ongoing_duration:
         duration = Duration.objects.create(task=task, start_time=current_time)
         duration.assigned_to.add(employee)
@@ -638,7 +669,20 @@ class EmployeeTaskUpdateView(APIView):
         return Response({"task":TaskSerializer(task).data,'message': 'Task updated successfully'})
     
 
-    
+def index_cal(request):  
+    # all_events = Events.objects.all()
+    # context = {
+    #     "events":all_events,
+    # }
+    return render(request,'index.html')
+class TaskDetailView_calendar(APIView):
+    def get(self, request,id):
+        try:
+            task = Task.objects.get(id=id)
+        except Task.DoesNotExist:
+            return JsonResponse({'error': 'Task not found'}, status=404)
+      
+        return Response(TaskSerializer(task).data)
 class TaskDetailView(APIView):
     def get(self, request, employee_uuid,task_uuid):
         try:
